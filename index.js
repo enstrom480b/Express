@@ -3,9 +3,11 @@ var express =require('express')
 var path=require('path')
 var helmet=require('helmet')
 var router=express()
+var methodoverride=require('method-override')
 const cookieParser=require('cookie-parser')
 const request=require('request')
 router.use(cookieParser())
+router.use(methodoverride('_method'))
 var ejs=require('ejs')
 const { Body } = require('node-fetch')
 router.use(express.static('public'))
@@ -41,16 +43,46 @@ image:"https://pixabay.com/get/g3002c894297bb99eb7bfbeae42894ecc6fdd1d5050b3c09d
    else{
       console.log('newly created campgrounds')
    }
-}
+}y
 
 )
 */
+
+router.put('/campgrounds/:id',function(req,res,next){
+
+
+   campground.findByIdAndUpdate(req.params.id,{name:req.body.name},function(err,update){
+
+if(err){
+   res.redirect('/campgrounds')
+}
+else{
+   console.log()
+   res.redirect('/campground/'+req.params.id)
+}
+
+   })
+  // res.send('put')
+})
+
+
 router.get('/',function(req,res,next){
  res.render('landing')
    
 })
 router.get('/campground/:id',function(req,res,next){
-   res.send(req.params.id)
+
+   campground.findById(req.params.id,function(err,foundcamp){
+if(err)
+{
+   console.log(err)
+}
+else{
+res.render('show',{campground:foundcamp})
+
+}
+
+   })
      
   })
 
@@ -80,6 +112,28 @@ router.get('/campgrounds/new',function(req,res,next){
  res.render('form')
    
 })
+
+
+router.get('/campground/:id/edit',function(req,res,next){
+   campground.findById(req.params.id,function(err,foundsite){
+if(err)
+{
+   res.send(req.params.id)
+}
+else{
+   res.render('edit',{campground:foundsite})
+}
+
+
+   }) 
+
+   
+
+  })
+  
+
+
+
 
 
 router.get('/campgrounds',function(req,res,next){
